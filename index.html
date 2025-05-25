@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gabriel - Digital Architect</title>
-    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="styles.css?v=4">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -45,6 +45,11 @@
             <a href="#contact" class="nav-item" data-section="contact">
                 <span class="nav-icon">◎</span>
                 <span class="nav-text">CONTACT</span>
+                <span class="nav-indicator"></span>
+            </a>
+            <a href="#llm" class="nav-item llm-nav" data-section="llm">
+                <span class="nav-icon">⚡</span>
+                <span class="nav-text">LLM</span>
                 <span class="nav-indicator"></span>
             </a>
         </nav>
@@ -385,6 +390,77 @@
                             <span class="channel-text">LINKEDIN</span>
                             <span class="channel-value">gabe</span>
                         </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="llm" class="section llm-section">
+            <div class="section-content">
+                <h2 class="section-title">
+                    <span class="title-number">05</span>
+                    <span class="title-text">LLM CHAT</span>
+                    <span class="title-line"></span>
+                </h2>
+                
+                <div class="llm-container">
+                    <div class="api-key-section" id="apiKeySection">
+                        <div class="api-key-header">
+                            <h3>OpenRouter API Key Required</h3>
+                            <p>Go to <a href="https://openrouter.ai/" target="_blank" rel="noopener">openrouter.ai</a> to create an API key and paste it below.</p>
+                        </div>
+                        <div class="api-key-input-group">
+                            <input type="password" id="apiKeyInput" class="api-key-input" placeholder="Enter your OpenRouter API key">
+                            <button class="cyber-button save-key-btn" id="saveKeyBtn">
+                                <span class="button-text">SAVE KEY</span>
+                                <span class="button-glow"></span>
+                            </button>
+                        </div>
+                        <p class="security-note">🔒 Your API key is stored securely in your browser only</p>
+                    </div>
+
+                    <div class="chat-interface" id="chatInterface" style="display: none;">
+                        <div class="chat-header">
+                            <div class="model-selector-group">
+                                <label for="modelSelect">Model:</label>
+                                <select id="modelSelect" class="model-select">
+                                    <option value="loading">Loading models...</option>
+                                </select>
+                            </div>
+                            <button class="clear-chat-btn" id="clearChatBtn">Clear Chat</button>
+                            <button class="logout-btn" id="logoutBtn">Logout</button>
+                        </div>
+
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="welcome-message">
+                                <p>Welcome to the LLM Chat Interface! 🚀</p>
+                                <p>You can chat with various AI models and even upload images.</p>
+                            </div>
+                        </div>
+
+                        <div class="chat-input-container">
+                            <div class="image-preview-container" id="imagePreviewContainer" style="display: none;">
+                                <div class="image-preview" id="imagePreview"></div>
+                                <button class="remove-image-btn" id="removeImageBtn">×</button>
+                            </div>
+                            
+                            <div class="chat-input-group">
+                                <div class="input-wrapper">
+                                    <textarea id="chatInput" class="chat-input" placeholder="Type your message here..." rows="1"></textarea>
+                                    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                                    <button class="image-upload-btn" id="imageUploadBtn" title="Upload image">
+                                        <span>📷</span>
+                                    </button>
+                                </div>
+                                <button class="send-btn" id="sendBtn" disabled>
+                                    <span class="send-icon">➤</span>
+                                </button>
+                            </div>
+                            
+                            <div class="drop-zone" id="dropZone">
+                                <p>Drop image here</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
