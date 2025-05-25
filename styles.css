@@ -1213,3 +1213,54 @@ EOF < /dev/null
         padding: 3rem 1.5rem;
     }
 }
+
+/* AGGRESSIVE FIX - Remove ALL top spacing from section elements */
+.section:not(.hero-section) h2,
+.section:not(.hero-section) h3,
+.section:not(.hero-section) h4,
+.section:not(.hero-section) p,
+.section:not(.hero-section) div {
+    margin-top: 0 !important;
+}
+
+/* Specifically target section-content to ensure no padding */
+.section:not(.hero-section) .section-content {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Remove ALL top margin from section titles */
+.section-title {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Ensure first child of any section has no top margin */
+.section:not(.hero-section) > *:first-child,
+.section:not(.hero-section) .section-content > *:first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Fix h2 default margins */
+h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+/* Remove any remaining spacing */
+.about-section .section-content > *:first-child,
+.skills-section .section-content > *:first-child,
+.projects-section .section-content > *:first-child,
+.contact-section .section-content > *:first-child {
+    margin-top: 0 !important;
+}
+
+/* Reset all margins in section-content */
+.section-content > * {
+    margin-top: 0;
+}
+
+.section-content > * + * {
+    margin-top: 1rem;
+}
