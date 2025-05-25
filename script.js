@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
         cursor.style.left = e.clientX + 'px';
         cursor.style.top = e.clientY + 'px';
     });
-
+    
     // Sidebar navigation
     const navItems = document.querySelectorAll('.nav-item');
     const sections = document.querySelectorAll('.section');
@@ -25,11 +25,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 section.classList.remove('active');
                 if (section.id === targetSection) {
                     section.classList.add('active');
+                    
+                    // FIX: Scroll to top when changing sections
+                    // This ensures the content starts at the top
+                    window.scrollTo({
+                        top: 0,
+                        left: 0,
+                        behavior: 'instant' // Use 'instant' instead of 'smooth' for immediate scroll
+                    });
                 }
             });
         });
     });
-
+    
     // Typing effect for hero description
     const typingText = document.querySelector('.typing-text');
     if (typingText) {
@@ -47,13 +55,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         setTimeout(type, 500);
     }
-
+    
     // Observer options for animations
     const observerOptions = {
         threshold: 0.5,
         rootMargin: '0px'
     };
-
+    
     // Animate skill bars when skills section is visible
     const skillObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -70,12 +78,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }, observerOptions);
-
+    
     const skillsSection = document.querySelector('.skills-section');
     if (skillsSection) {
         skillObserver.observe(skillsSection);
     }
-
+    
     // Explore button functionality
     const exploreButton = document.querySelector('.cyber-button');
     if (exploreButton) {
@@ -86,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
+    
     // Add floating particles
     const particleContainer = document.querySelector('.floating-particles');
     if (particleContainer) {
@@ -106,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
             particleContainer.appendChild(particle);
         }
     }
-
+    
     // Glitch effect on hover for project cards
     const projectCards = document.querySelectorAll('.project-card');
     projectCards.forEach(card => {
@@ -117,19 +125,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         });
     });
-
+    
     // Project category filtering
     const categoryButtons = document.querySelectorAll('.category-btn');
     const projectCardsWithCategory = document.querySelectorAll('.project-card[data-category]');
     const comfyuiShowcase = document.querySelector('.comfyui-showcase');
     const projectsShowcase = document.querySelector('.projects-showcase');
-
+    
     categoryButtons.forEach(button => {
         button.addEventListener('click', () => {
             // Update active button
             categoryButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
-
+            
             // Filter projects
             const category = button.getAttribute('data-category');
             
@@ -163,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
+    
     // ComfyUI node interactions
     const floatingNodes = document.querySelectorAll('.floating-node');
     const nodeDetails = document.getElementById('node-details');
@@ -171,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const detailsDescription = nodeDetails?.querySelector('.details-description');
     const detailsTech = nodeDetails?.querySelector('.details-tech');
     const detailsLink = nodeDetails?.querySelector('.details-link');
-
+    
     const nodeData = {
         'ComfyUI-11labs': {
             title: 'ElevenLabs TTS Node',
@@ -204,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
             link: 'https://github.com/gabe-init/comfyui_ui_render'
         }
     };
-
+    
     floatingNodes.forEach(node => {
         node.addEventListener('click', function() {
             const repo = this.getAttribute('data-repo');
@@ -231,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
+    
     // Center node click - show all nodes
     const centerNode = document.querySelector('.center-node');
     if (centerNode) {
@@ -244,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-
+    
     // Mobile menu toggle
     const mobileMenuToggle = document.createElement('button');
     mobileMenuToggle.className = 'mobile-menu-toggle';
@@ -262,16 +270,16 @@ document.addEventListener('DOMContentLoaded', function() {
         font-size: 1.5rem;
         cursor: pointer;
     `;
-
+    
     document.body.appendChild(mobileMenuToggle);
-
+    
     const sidebar = document.querySelector('.sidebar');
     
     mobileMenuToggle.addEventListener('click', () => {
         sidebar.classList.toggle('open');
         mobileMenuToggle.textContent = sidebar.classList.contains('open') ? '✕' : '☰';
     });
-
+    
     // Show mobile menu toggle on smaller screens
     const checkMobileMenu = () => {
         if (window.innerWidth <= 1024) {
@@ -281,10 +289,28 @@ document.addEventListener('DOMContentLoaded', function() {
             sidebar.classList.remove('open');
         }
     };
-
+    
     window.addEventListener('resize', checkMobileMenu);
     checkMobileMenu();
-
+    
+    // FIX: Reset skill bars when navigating away from skills section
+    // This ensures they animate again when revisiting
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const targetSection = this.getAttribute('data-section');
+            if (targetSection !== 'skills') {
+                // Reset all skill progress bars
+                document.querySelectorAll('.skill-progress').forEach(progress => {
+                    progress.style.width = '0';
+                });
+                // Re-observe the skills section for next visit
+                if (skillsSection) {
+                    skillObserver.observe(skillsSection);
+                }
+            }
+        });
+    });
+    
     // Add cyber sound effects (optional - commented out)
     /*
     const addSound = (frequency, duration) => {
@@ -302,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + duration);
     };
-
+    
     // Add sound on button clicks
     document.querySelectorAll('button, .nav-item').forEach(element => {
         element.addEventListener('click', () => addSound(400, 0.1));

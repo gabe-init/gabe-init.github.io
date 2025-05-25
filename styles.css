@@ -22,8 +22,6 @@ body {
     color: var(--light);
     overflow-x: hidden;
     cursor: none;
-    min-height: 0;
-    height: auto;
 }
 
 .cyber-grid {
@@ -204,27 +202,48 @@ body {
     letter-spacing: 0.05em;
 }
 
+/* MAIN CONTENT - Critical fix */
 .main-content {
     margin-left: var(--sidebar-width);
     position: relative;
     z-index: 10;
-    min-height: 0;
-    height: auto;
 }
 
+/* SECTION STYLES - Completely refactored */
 .section {
-    min-height: 0;
-    height: auto;
-    padding: 0;
     display: none;
     opacity: 0;
-    transform: translateY(0);
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    transform: none;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
-/* Keep hero section full height */
+.section.active {
+    display: block;
+    animation: sectionIn 0.6s forwards;
+}
+
+@keyframes sectionIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hero Section - Special case with full height */
 .hero-section {
     min-height: 100vh;
-    padding: 5rem 3rem;  /* Keep this for hero - it needs the space */
+    padding: 5rem 3rem;
     display: flex !important;
     flex-direction: column;
     justify-content: center;
@@ -232,48 +251,39 @@ body {
     text-align: center;
 }
 
-/* Override min-height for all non-hero sections */
+.hero-section.active {
+    display: flex !important;
+}
+
+/* All other sections - NO flex, NO centering, starts at top */
 .about-section,
 .skills-section,
 .projects-section,
 .contact-section {
+    padding: 40px 40px 40px !important;
     min-height: 0 !important;
     height: auto !important;
-    max-height: none !important;
-    padding: 0 40px 20px !important;  /* top 0 | sides 40 | bottom 20 */
-    display: block !important; /* when active */
+    display: block !important;
+    position: relative !important;
+    top: 0 !important;
+    transform: none !important;
     align-items: flex-start !important;
     justify-content: flex-start !important;
+    flex-direction: row !important;
 }
 
-.section.active {
-    display: block !important;
-    animation: sectionIn 0.6s forwards;
-    min-height: 0 !important;
-    height: auto !important;
-}
-
-@keyframes sectionIn {
-    from {
-        opacity: 0;
-        transform: none;
-    }
-    to {
-        opacity: 1;
-        transform: none;
-    }
-}
-
+/* Section content wrapper */
 .section-content {
     max-width: 1200px;
     margin: 0 auto;
 }
 
+/* Section titles */
 .section-title {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 3rem;
     font-family: 'Orbitron', monospace;
 }
 
@@ -295,20 +305,7 @@ body {
     background: linear-gradient(90deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
 }
 
-
-/* Force all other sections to start at top */
-.about-section,
-.skills-section,
-.projects-section,
-.contact-section {
-    display: block !important;
-    justify-content: flex-start !important;
-    align-items: flex-start !important;
-    flex-direction: column !important;
-    position: relative !important;
-    top: 0 !important;
-}
-
+/* Hero specific styles */
 .hero-subtitle {
     font-family: 'Orbitron', monospace;
     font-size: 1.5rem;
@@ -349,6 +346,7 @@ body {
     letter-spacing: 0.05em;
 }
 
+/* Cyber button */
 .cyber-button {
     position: relative;
     padding: 1rem 2.5rem;
@@ -406,12 +404,12 @@ body {
     opacity: 0.5;
 }
 
-
+/* About section */
 .about-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
+    gap: 3rem;
+    align-items: start;
 }
 
 .lead-text {
@@ -457,16 +455,17 @@ body {
     100% { transform: translateY(100%); }
 }
 
+/* Skills section */
 .skills-matrix {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 3rem;
+    gap: 2rem;
 }
 
 .category-title {
     font-family: 'Orbitron', monospace;
     font-size: 1.2rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     color: var(--primary);
     letter-spacing: 0.1em;
 }
@@ -498,6 +497,7 @@ body {
     box-shadow: 0 0 10px currentColor;
 }
 
+/* Projects section */
 .project-categories {
     display: flex;
     justify-content: center;
@@ -551,14 +551,6 @@ body {
     gap: 2rem;
 }
 
-.project-card[data-category] {
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.project-card.hidden {
-    display: none;
-}
-
 .project-card {
     background: linear-gradient(135deg, rgba(10, 10, 10, 0.8) 0%, rgba(20, 20, 20, 0.8) 100%);
     border: 1px solid rgba(0, 255, 255, 0.2);
@@ -567,6 +559,14 @@ body {
     transition: var(--transition);
     position: relative;
     overflow: hidden;
+}
+
+.project-card[data-category] {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.project-card.hidden {
+    display: none;
 }
 
 .project-card::before {
@@ -611,21 +611,6 @@ body {
     border: 1px solid;
     border-radius: 20px;
     letter-spacing: 0.05em;
-}
-
-.project-status:contains("DEPLOYED") {
-    color: #00ff00;
-    border-color: #00ff00;
-}
-
-.project-status:contains("IN PROGRESS") {
-    color: var(--accent);
-    border-color: var(--accent);
-}
-
-.project-status:contains("COMPLETED") {
-    color: var(--primary);
-    border-color: var(--primary);
 }
 
 .project-title {
@@ -676,6 +661,7 @@ body {
     color: var(--primary);
 }
 
+/* Contact section */
 .contact-container {
     text-align: center;
 }
@@ -737,6 +723,7 @@ body {
     color: var(--light);
 }
 
+/* Cursor glow */
 .cursor-glow {
     position: fixed;
     width: 20px;
@@ -749,52 +736,10 @@ body {
     transition: transform 0.1s ease;
 }
 
-@media (max-width: 1024px) {
-    .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-    }
-    
-    .sidebar.open {
-        transform: translateX(0);
-    }
-    
-    .main-content {
-        margin-left: 0;
-    }
-    
-    .about-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 768px) {
-    .section {
-        padding: 0;
-    }
-    
-    .section:not(.hero-section) {
-        padding: 0 15px 15px !important;  /* NO top padding */
-    }
-    
-    .projects-showcase {
-        grid-template-columns: 1fr;
-    }
-    
-    .contact-channels {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .hero-title {
-        font-size: clamp(2rem, 10vw, 4rem);
-    }
-}
-/* ComfyUI Nodes Showcase */
+/* ComfyUI Showcase */
 .comfyui-showcase {
     position: relative;
-    min-height: 600px;
-    margin: 3rem 0;
+    margin: 2rem 0;
     padding: 2rem;
     background: radial-gradient(ellipse at center, rgba(0, 255, 255, 0.05) 0%, transparent 70%);
     border-radius: 20px;
@@ -803,7 +748,7 @@ body {
 
 .comfyui-header {
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
     z-index: 10;
     position: relative;
 }
@@ -837,7 +782,7 @@ body {
 
 .floating-nodes-container {
     position: relative;
-    height: 500px;
+    height: 400px;
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
@@ -1079,8 +1024,69 @@ body {
     display: inline-block;
 }
 
-/* Responsive adjustments for ComfyUI showcase */
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* CRITICAL FIX: Override ANY centering on non-hero sections */
+#about, #skills, #projects, #contact {
+    display: block !important;
+    position: relative !important;
+    top: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+    min-height: 0 !important;
+    height: auto !important;
+}
+
+#about.active, 
+#skills.active, 
+#projects.active, 
+#contact.active {
+    display: block !important;
+}
+
 @media (max-width: 768px) {
+    .hero-section {
+        padding: 3rem 1.5rem;
+    }
+    
+    .about-section,
+    .skills-section,
+    .projects-section,
+    .contact-section {
+        padding: 30px 20px !important;
+    }
+    
+    .projects-showcase {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-channels {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .hero-title {
+        font-size: clamp(2rem, 10vw, 4rem);
+    }
+    
     .orbit-container {
         width: 300px;
         height: 300px;
@@ -1108,8 +1114,16 @@ body {
     }
 }
 
-/* Additional animations and effects */
+/* Ensure clean spacing */
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+}
 
+.section-content > *:first-child {
+    margin-top: 0;
+}
+
+/* Fix for ComfyUI showcase animation */
 .comfyui-showcase.active {
     animation: fadeIn 0.5s ease forwards;
 }
@@ -1125,104 +1139,49 @@ body {
     }
 }
 
-/* Ensure tech tags are styled in the details section */
-.details-tech .tech-tag {
-    display: inline-block;
-    padding: 0.3rem 0.8rem;
-    background: rgba(0, 255, 255, 0.1);
-    border: 1px solid rgba(0, 255, 255, 0.3);
-    border-radius: 20px;
-    font-size: 0.8rem;
-    color: var(--primary);
-    transition: all 0.3s ease;
+/* ABSOLUTE FINAL OVERRIDE - Place at very end of CSS */
+.main-content .section:not(.hero-section) {
+    display: none !important;
+    min-height: 0 !important;
+    height: auto !important;
 }
 
-.details-tech .tech-tag:hover {
-    background: rgba(0, 255, 255, 0.2);
-    transform: translateY(-2px);
+.main-content .section:not(.hero-section).active {
+    display: block !important;
+    padding-top: 40px !important;
 }
 
-/* Fix the node positioning issues */
-.node-1 {
-    top: 10%;
-    left: 50%;
-    transform: translateX(-50%);
+/* Ensure content starts at top */
+html, body {
+    scroll-behavior: auto;
 }
 
-/* Hide projects showcase by default when ComfyUI is selected */
-.projects-showcase {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
+.section.active:not(.hero-section) {
+    position: relative !important;
+    top: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 40px !important;
+}
+/* BETTER FIX: Hide non-active sections properly */
+.main-content {
+    position: relative;
 }
 
-/* Fix projects section spacing */
-.projects-section {
-    min-height: auto !important;
-    padding: 20px 40px !important;
+/* Ensure hidden sections take no space */
+.section {
+    display: none !important;
 }
 
-.projects-section .section-content {
-    max-width: 1400px;
-    margin: 0 auto;
+.section.active {
+    display: block !important;
 }
 
-/* Reduce gap in comfyui showcase */
-.comfyui-showcase {
-    min-height: auto;
-    margin: 2rem 0;
-    padding: 2rem;
+.hero-section.active {
+    display: flex !important;
 }
 
-.floating-nodes-container {
-    height: 400px;
+/* Non-hero sections start at the very top when active */
+.section.active:not(.hero-section) {
+    min-height: calc(100vh - 80px); /* Full height minus some padding */
+    padding-top: 40px !important;
 }
-
-.comfyui-header {
-    margin-bottom: 2rem;
-}
-
-
-/* Reduce spacing in about grid */
-.about-grid {
-    gap: 3rem;
-}
-
-/* Reduce spacing in skills matrix */
-.skills-matrix {
-    gap: 2rem;
-}
-
-.category-title {
-    margin-bottom: 1.5rem;
-}
-
-/* Reduce contact section spacing */
-.contact-message {
-    margin-bottom: 2rem;
-}
-
-/* Better responsive padding */
-@media (max-width: 768px) {
-    .section:not(.hero-section) {
-        padding: 0 15px 15px !important;  /* NO top padding */
-    }
-    
-    .hero-section {
-        padding: 3rem 1.5rem;
-    }
-}
-
-/* Clean spacing for section elements */
-h2 {
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-}
-
-
-/* Ensure first elements don't add extra space */
-.section-content > *:first-child {
-    margin-top: 0;
-}
-
