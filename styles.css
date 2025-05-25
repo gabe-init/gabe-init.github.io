@@ -210,10 +210,10 @@ body {
 
 .section {
     min-height: auto;
-    padding: 3rem 3rem;
+    padding: 0;
     display: none;
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(0);
 }
 
 /* Keep hero section full height */
@@ -228,7 +228,8 @@ body {
 .projects-section,
 .contact-section {
     min-height: auto !important;
-    padding: 2rem 2rem !important;
+    padding: 20px 40px !important;
+    padding-top: 20px !important;
 }
 
 .section.active {
@@ -237,9 +238,13 @@ body {
 }
 
 @keyframes sectionIn {
+    from {
+        opacity: 0;
+        transform: none;
+    }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: none;
     }
 }
 
@@ -753,7 +758,11 @@ body {
 
 @media (max-width: 768px) {
     .section {
-        padding: 3rem 1.5rem;
+        padding: 0;
+    }
+    
+    .section:not(.hero-section) {
+        padding: 15px !important;
     }
     
     .projects-showcase {
@@ -1144,8 +1153,8 @@ EOF < /dev/null
 
 /* Fix projects section spacing */
 .projects-section {
-    min-height: auto;
-    padding: 3rem 3rem 5rem;
+    min-height: auto !important;
+    padding: 20px 40px !important;
 }
 
 .projects-section .section-content {
@@ -1172,7 +1181,7 @@ EOF < /dev/null
 .about-section,
 .skills-section,
 .contact-section {
-    padding: 2rem 3rem 3rem;
+    padding: 20px 40px !important;
 }
 
 /* Reduce spacing in about grid */
@@ -1196,103 +1205,11 @@ EOF < /dev/null
 
 /* Better responsive padding */
 @media (max-width: 768px) {
-    .section {
-        padding: 2rem 1.5rem;
+    .section:not(.hero-section) {
+        padding: 15px !important;
     }
     
     .hero-section {
         padding: 3rem 1.5rem;
     }
-}
-
-/* Force remove all extra spacing */
-.section:not(.hero-section) {
-    min-height: unset \!important;
-    padding-top: 1.5rem \!important;
-    padding-bottom: 2rem \!important;
-}
-
-/* Ensure sections start at the top */
-.section.active {
-    padding-top: 1.5rem \!important;
-}
-
-/* Make section content tighter */
-.section-content {
-    padding-top: 0 \!important;
-}
-
-/* Reduce all margins in sections */
-.about-section * + *,
-.skills-section * + *,
-.projects-section * + *,
-.contact-section * + * {
-    margin-top: 1rem;
-}
-
-/* Override specific elements */
-.about-section .section-title,
-.skills-section .section-title,
-.projects-section .section-title,
-.contact-section .section-title {
-    margin-bottom: 1.5rem \!important;
-    margin-top: 0 \!important;
-}
-
-/* Fix project categories spacing */
-.project-categories {
-    margin-bottom: 1.5rem \!important;
-}
-
-/* Ensure no extra top padding */
-.about-section .section-content,
-.skills-section .section-content,
-.projects-section .section-content,
-.contact-section .section-content {
-    padding: 0 \!important;
-}
-
-/* AGGRESSIVE FIX - Remove ALL spacing from top */
-.section:not(.hero-section) {
-    padding: 0 \!important;
-    margin: 0 \!important;
-    min-height: 0 \!important;
-}
-
-.section:not(.hero-section).active {
-    padding: 20px \!important;
-    padding-top: 20px \!important;
-}
-
-/* Ensure content is at the very top */
-.section:not(.hero-section) .section-content {
-    margin-top: 0 \!important;
-    padding-top: 0 \!important;
-}
-
-/* Remove any default margins that might push content down */
-.section:not(.hero-section) > *:first-child {
-    margin-top: 0 \!important;
-}
-
-.section-title {
-    margin-top: 0 \!important;
-    padding-top: 0 \!important;
-}
-
-/* Fix the active section animation pushing content down */
-@keyframes sectionIn {
-    to {
-        opacity: 1;
-        transform: translateY(0) \!important;
-    }
-}
-
-/* Override the transform that pushes content down */
-.section:not(.hero-section) {
-    transform: none \!important;
-}
-
-.section:not(.hero-section).active {
-    transform: none \!important;
 }
