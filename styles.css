@@ -204,7 +204,6 @@ body {
 
 .main-content {
     margin-left: var(--sidebar-width);
-    min-height: 100vh;
     position: relative;
     z-index: 10;
 }
@@ -221,6 +220,15 @@ body {
 .hero-section {
     min-height: 100vh;
     padding: 5rem 3rem;
+}
+
+/* Override min-height for all non-hero sections */
+.about-section,
+.skills-section,
+.projects-section,
+.contact-section {
+    min-height: auto !important;
+    padding: 2rem 2rem !important;
 }
 
 .section.active {
@@ -1185,4 +1193,51 @@ EOF < /dev/null
     .hero-section {
         padding: 3rem 1.5rem;
     }
+}
+
+/* Force remove all extra spacing */
+.section:not(.hero-section) {
+    min-height: unset \!important;
+    padding-top: 1.5rem \!important;
+    padding-bottom: 2rem \!important;
+}
+
+/* Ensure sections start at the top */
+.section.active {
+    padding-top: 1.5rem \!important;
+}
+
+/* Make section content tighter */
+.section-content {
+    padding-top: 0 \!important;
+}
+
+/* Reduce all margins in sections */
+.about-section * + *,
+.skills-section * + *,
+.projects-section * + *,
+.contact-section * + * {
+    margin-top: 1rem;
+}
+
+/* Override specific elements */
+.about-section .section-title,
+.skills-section .section-title,
+.projects-section .section-title,
+.contact-section .section-title {
+    margin-bottom: 1.5rem \!important;
+    margin-top: 0 \!important;
+}
+
+/* Fix project categories spacing */
+.project-categories {
+    margin-bottom: 1.5rem \!important;
+}
+
+/* Ensure no extra top padding */
+.about-section .section-content,
+.skills-section .section-content,
+.projects-section .section-content,
+.contact-section .section-content {
+    padding: 0 \!important;
 }
