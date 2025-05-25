@@ -206,7 +206,7 @@ body {
 .main-content {
     margin-left: var(--sidebar-width);
     position: relative;
-    z-index: 10;
+    z-index: 5;
 }
 
 /* SECTION STYLES - Completely refactored */
@@ -503,6 +503,8 @@ body {
     justify-content: center;
     gap: 1rem;
     margin-bottom: 3rem;
+    position: relative;
+    z-index: 15;
 }
 
 .category-btn {
@@ -517,6 +519,7 @@ body {
     transition: var(--transition);
     position: relative;
     overflow: hidden;
+    z-index: 15;
 }
 
 .category-btn::before {
@@ -559,6 +562,7 @@ body {
     transition: var(--transition);
     position: relative;
     overflow: hidden;
+    z-index: 15;
 }
 
 .project-card[data-category] {
@@ -744,6 +748,7 @@ body {
     background: radial-gradient(ellipse at center, rgba(0, 255, 255, 0.05) 0%, transparent 70%);
     border-radius: 20px;
     overflow: hidden;
+    z-index: 15;
 }
 
 .comfyui-header {
@@ -890,14 +895,14 @@ body {
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    z-index: 5;
+    z-index: 15;
 }
 
 .floating-node:hover {
     transform: scale(1.1);
     border-color: var(--primary);
     background: linear-gradient(135deg, rgba(20, 20, 20, 0.95), rgba(40, 40, 40, 0.95));
-    z-index: 20;
+    z-index: 25;
 }
 
 .floating-node.active {
@@ -1177,6 +1182,8 @@ html, body {
     width: 100% !important;
     display: none !important;
     opacity: 0;
+    pointer-events: none !important;
+    z-index: 1;
 }
 
 /* When active, show the section */
@@ -1184,6 +1191,8 @@ html, body {
     display: block !important;
     opacity: 1;
     animation: sectionIn 0.6s forwards;
+    pointer-events: auto !important;
+    z-index: 10;
 }
 
 /* Hero section special case - needs flex when active */
@@ -1196,6 +1205,8 @@ html, body {
 
 .hero-section.active {
     display: flex !important;
+    pointer-events: auto !important;
+    z-index: 10;
 }
 
 /* Ensure ALL non-hero sections start at exact same position */
@@ -1213,6 +1224,8 @@ html, body {
 #contact.active {
     display: block !important;
     min-height: calc(100vh - 40px);
+    pointer-events: auto !important;
+    z-index: 10;
 }
 
 /* ABSOLUTE FINAL OVERRIDE - Remove ANY relative positioning */
