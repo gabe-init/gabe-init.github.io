@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gabriel - Digital Architect</title>
-    <link rel="stylesheet" href="styles.css?v=4">
+    <link rel="stylesheet" href="styles.css?v=5">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -422,10 +422,15 @@
                     <div class="chat-interface" id="chatInterface" style="display: none;">
                         <div class="chat-header">
                             <div class="model-selector-group">
-                                <label for="modelSelect">Model:</label>
-                                <select id="modelSelect" class="model-select">
-                                    <option value="loading">Loading models...</option>
-                                </select>
+                                <label for="modelSearch">Model:</label>
+                                <div class="custom-model-select" id="customModelSelect">
+                                    <input type="text" id="modelSearch" class="model-search" placeholder="Search or select model..." readonly>
+                                    <div class="model-dropdown" id="modelDropdown">
+                                        <div class="model-dropdown-content" id="modelDropdownContent">
+                                            <div class="model-loading">Loading models...</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <button class="clear-chat-btn" id="clearChatBtn">Clear Chat</button>
                             <button class="logout-btn" id="logoutBtn">Logout</button>

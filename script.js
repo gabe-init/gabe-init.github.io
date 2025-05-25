@@ -340,7 +340,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveKeyBtn = document.getElementById('saveKeyBtn');
     const apiKeySection = document.getElementById('apiKeySection');
     const chatInterface = document.getElementById('chatInterface');
-    const modelSelect = document.getElementById('modelSelect');
+    const customModelSelect = document.getElementById('customModelSelect');
+    const modelSearch = document.getElementById('modelSearch');
+    const modelDropdown = document.getElementById('modelDropdown');
+    const modelDropdownContent = document.getElementById('modelDropdownContent');
     const clearChatBtn = document.getElementById('clearChatBtn');
     const logoutBtn = document.getElementById('logoutBtn');
     const chatMessages = document.getElementById('chatMessages');
@@ -356,6 +359,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let apiKey = localStorage.getItem('openrouter_api_key');
     let currentImage = null;
     let chatHistory = [];
+    let selectedModel = 'openai/gpt-4o';
+    let allModels = [];
     
     // Check if API key exists and show appropriate UI
     if (apiKey) {
@@ -405,55 +410,134 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch('https://openrouter.ai/api/v1/models');
             const data = await response.json();
             
-            modelSelect.innerHTML = '';
-            
-            // Add popular models first
-            const popularModels = [
-                'openai/gpt-4o',
-                'anthropic/claude-3.5-sonnet',
-                'google/gemini-pro-1.5',
-                'meta-llama/llama-3.1-70b-instruct',
-                'openai/gpt-3.5-turbo'
-            ];
-            
             // Filter and sort models
-            const models = data.data.filter(model => {
+            allModels = data.data.filter(model => {
                 return model.architecture?.modality?.includes('text');
             });
             
-            // Add popular models to dropdown
-            popularModels.forEach(modelId => {
-                const model = models.find(m => m.id === modelId);
-                if (model) {
-                    const option = document.createElement('option');
-                    option.value = model.id;
-                    option.textContent = `${model.name} (${formatPrice(model.pricing)})`;
-                    modelSelect.appendChild(option);
+            // Group models by provider
+            const modelsByProvider = {};
+            allModels.forEach(model => {
+                const provider = model.id.split('/')[0];
+                if (!modelsByProvider[provider]) {
+                    modelsByProvider[provider] = [];
                 }
+                modelsByProvider[provider].push(model);
             });
             
-            // Add separator
-            const separator = document.createElement('option');
-            separator.disabled = true;
-            separator.textContent = '──────────────';
-            modelSelect.appendChild(separator);
+            // Set default model in search box
+            const defaultModel = allModels.find(m => m.id === selectedModel);
+            if (defaultModel) {
+                modelSearch.value = `${defaultModel.name} (${formatPrice(defaultModel.pricing)})`;
+            }
             
-            // Add remaining models
-            models.forEach(model => {
-                if (!popularModels.includes(model.id)) {
-                    const option = document.createElement('option');
-                    option.value = model.id;
-                    option.textContent = `${model.name} (${formatPrice(model.pricing)})`;
-                    modelSelect.appendChild(option);
-                }
-            });
-            
-            // Set default model
-            modelSelect.value = 'openai/gpt-4o';
+            renderModelDropdown(modelsByProvider);
         } catch (error) {
             console.error('Error loading models:', error);
-            modelSelect.innerHTML = '<option value="openai/gpt-4o">GPT-4o (default)</option>';
+            modelSearch.value = 'GPT-4o (default)';
         }
+    }
+    
+    // Render model dropdown with sections
+    function renderModelDropdown(modelsByProvider, searchQuery = '') {
+        modelDropdownContent.innerHTML = '';
+        
+        // Popular models section
+        const popularProviders = ['openai', 'anthropic', 'google', 'meta-llama'];
+        let hasResults = false;
+        
+        // Sort providers to show popular ones first
+        const sortedProviders = Object.keys(modelsByProvider).sort((a, b) => {
+            const aIndex = popularProviders.indexOf(a);
+            const bIndex = popularProviders.indexOf(b);
+            if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+            if (aIndex !== -1) return -1;
+            if (bIndex !== -1) return 1;
+            return a.localeCompare(b);
+        });
+        
+        sortedProviders.forEach(provider => {
+            const models = modelsByProvider[provider];
+            const filteredModels = searchQuery 
+                ? models.filter(model => 
+                    model.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    model.id.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                : models;
+            
+            if (filteredModels.length > 0) {
+                hasResults = true;
+                
+                // Create provider section
+                const section = document.createElement('div');
+                section.className = 'model-provider-section';
+                
+                // Provider header
+                const header = document.createElement('div');
+                header.className = 'model-provider-header';
+                header.textContent = getProviderDisplayName(provider);
+                section.appendChild(header);
+                
+                // Model options
+                filteredModels.forEach(model => {
+                    const option = document.createElement('div');
+                    option.className = 'model-option';
+                    if (model.id === selectedModel) {
+                        option.classList.add('selected');
+                    }
+                    
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'model-name';
+                    nameSpan.textContent = model.name;
+                    
+                    const priceSpan = document.createElement('span');
+                    priceSpan.className = 'model-price';
+                    priceSpan.textContent = formatPrice(model.pricing);
+                    
+                    option.appendChild(nameSpan);
+                    option.appendChild(priceSpan);
+                    
+                    option.addEventListener('click', () => {
+                        selectedModel = model.id;
+                        modelSearch.value = `${model.name} (${formatPrice(model.pricing)})`;
+                        customModelSelect.classList.remove('open');
+                        
+                        // Update selected state
+                        document.querySelectorAll('.model-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        option.classList.add('selected');
+                    });
+                    
+                    section.appendChild(option);
+                });
+                
+                modelDropdownContent.appendChild(section);
+            }
+        });
+        
+        if (!hasResults) {
+            const noResults = document.createElement('div');
+            noResults.className = 'no-results';
+            noResults.textContent = 'No models found';
+            modelDropdownContent.appendChild(noResults);
+        }
+    }
+    
+    function getProviderDisplayName(provider) {
+        const displayNames = {
+            'openai': 'OpenAI',
+            'anthropic': 'Anthropic',
+            'google': 'Google',
+            'meta-llama': 'Meta Llama',
+            'mistralai': 'Mistral AI',
+            'cohere': 'Cohere',
+            'perplexity': 'Perplexity',
+            'deepseek': 'DeepSeek',
+            'qwen': 'Qwen',
+            'nvidia': 'NVIDIA'
+        };
+        return displayNames[provider] || provider.charAt(0).toUpperCase() + provider.slice(1);
     }
     
     function formatPrice(pricing) {
@@ -462,6 +546,52 @@ document.addEventListener('DOMContentLoaded', function() {
         const completionPrice = parseFloat(pricing.completion) * 1000000;
         return `$${promptPrice.toFixed(2)}/$${completionPrice.toFixed(2)} per 1M`;
     }
+    
+    // Handle model dropdown interactions
+    modelSearch.addEventListener('click', (e) => {
+        e.stopPropagation();
+        customModelSelect.classList.toggle('open');
+        if (customModelSelect.classList.contains('open')) {
+            modelSearch.removeAttribute('readonly');
+            modelSearch.focus();
+            modelSearch.select();
+        }
+    });
+    
+    modelSearch.addEventListener('input', (e) => {
+        const searchQuery = e.target.value;
+        
+        // Regroup models for search
+        const modelsByProvider = {};
+        allModels.forEach(model => {
+            const provider = model.id.split('/')[0];
+            if (!modelsByProvider[provider]) {
+                modelsByProvider[provider] = [];
+            }
+            modelsByProvider[provider].push(model);
+        });
+        
+        renderModelDropdown(modelsByProvider, searchQuery);
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!customModelSelect.contains(e.target)) {
+            customModelSelect.classList.remove('open');
+            modelSearch.setAttribute('readonly', 'readonly');
+            
+            // Restore selected model text if search was cleared
+            const selectedModelData = allModels.find(m => m.id === selectedModel);
+            if (selectedModelData) {
+                modelSearch.value = `${selectedModelData.name} (${formatPrice(selectedModelData.pricing)})`;
+            }
+        }
+    });
+    
+    // Prevent closing when clicking inside dropdown
+    modelDropdown.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
     
     // Handle text input
     chatInput.addEventListener('input', () => {
@@ -582,7 +712,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    model: modelSelect.value,
+                    model: selectedModel,
                     messages: messages,
                     stream: true,
                 }),
