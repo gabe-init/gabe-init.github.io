@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gabriel - Digital Architect</title>
-    <link rel="stylesheet" href="styles.css?v=7">
+    <link rel="stylesheet" href="styles.css?v=8">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -214,6 +214,7 @@
                 <div class="project-categories">
                     <button class="category-btn active" data-category="all">ALL</button>
                     <button class="category-btn" data-category="comfyui">COMFYUI NODES</button>
+                    <button class="category-btn" data-category="desktop-widgets">DESKTOP WIDGETS</button>
                 </div>
 
                 <!-- ComfyUI Nodes Floating Section -->
@@ -281,6 +282,15 @@
                                 </div>
                                 <div class="node-glow"></div>
                             </div>
+                            
+                            <div class="floating-node node-6" data-repo="ComfyUI-Repo-Eater">
+                                <div class="node-content">
+                                    <div class="node-icon">📦</div>
+                                    <div class="node-name">Repo Eater</div>
+                                    <div class="node-desc">Code Analysis</div>
+                                </div>
+                                <div class="node-glow"></div>
+                            </div>
                         </div>
                     </div>
                     
@@ -297,12 +307,94 @@
                     </div>
                 </div>
 
+                <!-- Desktop Widgets Showcase Section -->
+                <div class="desktop-widgets-showcase" style="display: none;">
+                    <div class="widgets-header">
+                        <h3 class="widgets-title">
+                            <span class="title-glow">Desktop</span>
+                            <span class="title-accent">Widgets</span>
+                        </h3>
+                        <p class="widgets-subtitle">Cyberpunk System Monitoring for Your Desktop</p>
+                    </div>
+                    
+                    <div class="widgets-preview-container">
+                        <div class="widget-preview-frame">
+                            <div class="frame-corner top-left"></div>
+                            <div class="frame-corner top-right"></div>
+                            <div class="frame-corner bottom-left"></div>
+                            <div class="frame-corner bottom-right"></div>
+                            
+                            <div class="preview-image-wrapper">
+                                <img src="https://raw.githubusercontent.com/gabe-init/Desktop_Widgets/main/widget_preview.png" 
+                                     alt="Desktop Widgets Preview" 
+                                     class="widgets-preview-image">
+                                <div class="preview-scanline"></div>
+                            </div>
+                            
+                            <div class="widget-features">
+                                <div class="feature-item">
+                                    <span class="feature-icon">⚡</span>
+                                    <span class="feature-text">Real-time System Monitoring</span>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-icon">🎨</span>
+                                    <span class="feature-text">Cyberpunk Aesthetic</span>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-icon">⚙️</span>
+                                    <span class="feature-text">HWiNFO Integration</span>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-icon">🎯</span>
+                                    <span class="feature-text">5 Custom Widgets</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="widgets-grid">
+                            <div class="widget-card cpu-widget">
+                                <div class="widget-icon">🧠</div>
+                                <h4>CPU Monitor</h4>
+                                <p>Temperature, usage, and frequency tracking</p>
+                            </div>
+                            <div class="widget-card gpu-widget">
+                                <div class="widget-icon">🎮</div>
+                                <h4>GPU Monitor</h4>
+                                <p>GPU stats, VRAM, and power consumption</p>
+                            </div>
+                            <div class="widget-card clock-widget">
+                                <div class="widget-icon">🕐</div>
+                                <h4>Digital Clock</h4>
+                                <p>Time and date with circuit animations</p>
+                            </div>
+                            <div class="widget-card weather-widget">
+                                <div class="widget-icon">🌤️</div>
+                                <h4>Weather</h4>
+                                <p>Current conditions and 3-day forecast</p>
+                            </div>
+                            <div class="widget-card search-widget">
+                                <div class="widget-icon">🔍</div>
+                                <h4>Google Search</h4>
+                                <p>Quick search directly from desktop</p>
+                            </div>
+                        </div>
+                        
+                        <div class="widgets-cta">
+                            <a href="https://github.com/gabe-init/Desktop_Widgets" target="_blank" class="cyber-button primary">
+                                <span class="button-text">GET THE WIDGETS</span>
+                                <span class="button-glow"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="projects-showcase">
                     <!-- ComfyUI Nodes -->
                     <div class="project-card" data-project="01" data-category="comfyui">
                         <div class="project-header">
                             <span class="project-number">01</span>
                             <span class="project-status">OPEN SOURCE</span>
+                            <span class="project-badge comfyui-badge">COMFYUI NODE</span>
                         </div>
                         <h3 class="project-title">ELEVENLABS TTS</h3>
                         <p class="project-description">Text-to-speech integration for ComfyUI with advanced voice controls.</p>
@@ -323,6 +415,7 @@
                         <div class="project-header">
                             <span class="project-number">02</span>
                             <span class="project-status">OPEN SOURCE</span>
+                            <span class="project-badge comfyui-badge">COMFYUI NODE</span>
                         </div>
                         <h3 class="project-title">GOOGLE IMAGE SEARCH</h3>
                         <p class="project-description">Search and retrieve images from Google directly in ComfyUI workflows.</p>
@@ -343,6 +436,7 @@
                         <div class="project-header">
                             <span class="project-number">03</span>
                             <span class="project-status">OPEN SOURCE</span>
+                            <span class="project-badge comfyui-badge">COMFYUI NODE</span>
                         </div>
                         <h3 class="project-title">OPENROUTER LLM</h3>
                         <p class="project-description">Multi-modal LLM integration supporting text, images, and PDFs.</p>
@@ -363,6 +457,7 @@
                         <div class="project-header">
                             <span class="project-number">04</span>
                             <span class="project-status">OPEN SOURCE</span>
+                            <span class="project-badge comfyui-badge">COMFYUI NODE</span>
                         </div>
                         <h3 class="project-title">STRING SIMILARITY</h3>
                         <p class="project-description">Advanced text comparison with multiple similarity algorithms.</p>
@@ -383,6 +478,7 @@
                         <div class="project-header">
                             <span class="project-number">05</span>
                             <span class="project-status">OPEN SOURCE</span>
+                            <span class="project-badge comfyui-badge">COMFYUI NODE</span>
                         </div>
                         <h3 class="project-title">HTML RENDERER</h3>
                         <p class="project-description">Display rich HTML content directly within ComfyUI nodes.</p>
@@ -393,6 +489,27 @@
                         </div>
                         <div class="project-links">
                             <a href="https://github.com/gabe-init/comfyui_ui_render" class="project-link">
+                                <span class="link-icon">⟨/⟩</span>
+                                <span class="link-text">CODE</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="project-card" data-project="06" data-category="comfyui">
+                        <div class="project-header">
+                            <span class="project-number">06</span>
+                            <span class="project-status">OPEN SOURCE</span>
+                            <span class="project-badge comfyui-badge">COMFYUI NODE</span>
+                        </div>
+                        <h3 class="project-title">REPO EATER</h3>
+                        <p class="project-description">Consume and process repository content for AI analysis in ComfyUI.</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Git</span>
+                            <span class="tech-tag">Code Analysis</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/gabe-init/ComfyUI-Repo-Eater" class="project-link">
                                 <span class="link-icon">⟨/⟩</span>
                                 <span class="link-text">CODE</span>
                             </a>

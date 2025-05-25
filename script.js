@@ -130,6 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const categoryButtons = document.querySelectorAll('.category-btn');
     const projectCardsWithCategory = document.querySelectorAll('.project-card[data-category]');
     const comfyuiShowcase = document.querySelector('.comfyui-showcase');
+    const desktopWidgetsShowcase = document.querySelector('.desktop-widgets-showcase');
     const projectsShowcase = document.querySelector('.projects-showcase');
     
     categoryButtons.forEach(button => {
@@ -141,16 +142,28 @@ document.addEventListener('DOMContentLoaded', function() {
             // Filter projects
             const category = button.getAttribute('data-category');
             
-            // Show/hide ComfyUI showcase
+            // Show/hide showcases
             if (category === 'comfyui') {
                 comfyuiShowcase.style.display = 'block';
+                desktopWidgetsShowcase.style.display = 'none';
+                desktopWidgetsShowcase.classList.remove('active');
                 projectsShowcase.style.display = 'none';
                 setTimeout(() => {
                     comfyuiShowcase.classList.add('active');
                 }, 10);
+            } else if (category === 'desktop-widgets') {
+                desktopWidgetsShowcase.style.display = 'block';
+                comfyuiShowcase.style.display = 'none';
+                comfyuiShowcase.classList.remove('active');
+                projectsShowcase.style.display = 'none';
+                setTimeout(() => {
+                    desktopWidgetsShowcase.classList.add('active');
+                }, 10);
             } else {
                 comfyuiShowcase.style.display = 'none';
                 comfyuiShowcase.classList.remove('active');
+                desktopWidgetsShowcase.style.display = 'none';
+                desktopWidgetsShowcase.classList.remove('active');
                 projectsShowcase.style.display = 'grid';
                 
                 projectCardsWithCategory.forEach(card => {
@@ -210,6 +223,12 @@ document.addEventListener('DOMContentLoaded', function() {
             description: 'Display rich HTML content directly within ComfyUI nodes. Enables custom UI elements, data visualization, and interactive components in your workflows.',
             tech: ['JavaScript', 'HTML/CSS', 'Web Components', 'UI/UX'],
             link: 'https://github.com/gabe-init/comfyui_ui_render'
+        },
+        'ComfyUI-Repo-Eater': {
+            title: 'Repo Eater Node',
+            description: 'Consume and process repository content for AI analysis in ComfyUI. Extract code, documentation, and structure from git repositories for LLM processing and analysis workflows.',
+            tech: ['Python', 'Git', 'Code Analysis', 'Repository Processing'],
+            link: 'https://github.com/gabe-init/ComfyUI-Repo-Eater'
         }
     };
     
