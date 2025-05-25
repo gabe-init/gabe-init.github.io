@@ -1117,3 +1117,29 @@ EOF < /dev/null
     gap: 2rem;
     margin-top: 3rem;
 }
+
+/* Fix projects section spacing */
+.projects-section {
+    min-height: auto;
+    padding: 3rem 3rem 5rem;
+}
+
+.projects-section .section-content {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Reduce gap in comfyui showcase */
+.comfyui-showcase {
+    min-height: auto;
+    margin: 2rem 0;
+    padding: 2rem;
+}
+
+.floating-nodes-container {
+    height: 400px;
+}
+
+.comfyui-header {
+    margin-bottom: 2rem;
+}
