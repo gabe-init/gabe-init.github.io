@@ -224,7 +224,12 @@ body {
 /* Keep hero section full height */
 .hero-section {
     min-height: 100vh;
-    padding: 5rem 3rem;
+    padding: 5rem 3rem;  /* Keep this for hero - it needs the space */
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 /* Override min-height for all non-hero sections */
@@ -235,8 +240,7 @@ body {
     min-height: 0 !important;
     height: auto !important;
     max-height: none !important;
-    padding: 20px 40px !important;
-    padding-top: 20px !important;
+    padding: 0 40px 20px !important;  /* top 0 | sides 40 | bottom 20 */
     display: block !important; /* when active */
     align-items: flex-start !important;
     justify-content: flex-start !important;
@@ -291,13 +295,6 @@ body {
     background: linear-gradient(90deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
 }
 
-.hero-section {
-    display: flex !important;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
 
 /* Force all other sections to start at top */
 .about-section,
@@ -1112,11 +1109,6 @@ body {
 }
 
 /* Additional animations and effects */
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
 
 .comfyui-showcase.active {
     animation: fadeIn 0.5s ease forwards;
@@ -1228,80 +1220,15 @@ body {
     }
 }
 
-/* AGGRESSIVE FIX - Remove ALL top spacing from section elements */
-.section:not(.hero-section) h2,
-.section:not(.hero-section) h3,
-.section:not(.hero-section) h4,
-.section:not(.hero-section) p,
-.section:not(.hero-section) div {
-    margin-top: 0 !important;
-}
-
-/* Specifically target section-content to ensure no padding */
-.section:not(.hero-section) .section-content {
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-/* Remove ALL top margin from section titles */
-.section-title {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
-
-/* Ensure first child of any section has no top margin */
-.section:not(.hero-section) > *:first-child,
-.section:not(.hero-section) .section-content > *:first-child {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
-
-/* Fix h2 default margins */
+/* Clean spacing for section elements */
 h2 {
     margin-top: 0;
     margin-bottom: 1.5rem;
 }
 
-/* Remove any remaining spacing */
-.about-section .section-content > *:first-child,
-.skills-section .section-content > *:first-child,
-.projects-section .section-content > *:first-child,
-.contact-section .section-content > *:first-child {
-    margin-top: 0 !important;
-}
 
-/* Reset all margins in section-content */
-.section-content > * {
+/* Ensure first elements don't add extra space */
+.section-content > *:first-child {
     margin-top: 0;
 }
 
-.section-content > * + * {
-    margin-top: 1rem;
-}
-
-/* NUCLEAR OPTION - Force content to top */
-#about.active,
-#skills.active,
-#projects.active,
-#contact.active {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: flex-start !important;
-    align-items: stretch !important;
-    padding-top: 20px !important;
-}
-
-/* Ensure main-content does not force height */
-.main-content {
-    display: block !important;
-    height: auto !important;
-    min-height: 0 !important;
-}
-
-/* Force sections to start at viewport top when active */
-.section.active:not(.hero-section) {
-    position: relative !important;
-    top: 0 !important;
-    margin-top: 0 !important;
-    padding-top: 20px !important;
-}
