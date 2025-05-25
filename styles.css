@@ -1162,26 +1162,81 @@ html, body {
     margin-top: 0 !important;
     padding-top: 40px !important;
 }
-/* BETTER FIX: Hide non-active sections properly */
+/* COMPLETE FIX: Absolute positioning for ALL sections */
 .main-content {
     position: relative;
+    min-height: 100vh;
 }
 
-/* Ensure hidden sections take no space */
+/* ALL sections are absolutely positioned */
 .section {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
     display: none !important;
+    opacity: 0;
 }
 
+/* When active, show the section */
 .section.active {
     display: block !important;
+    opacity: 1;
+    animation: sectionIn 0.6s forwards;
+}
+
+/* Hero section special case - needs flex when active */
+.hero-section {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
 }
 
 .hero-section.active {
     display: flex !important;
 }
 
-/* Non-hero sections start at the very top when active */
-.section.active:not(.hero-section) {
-    min-height: calc(100vh - 80px); /* Full height minus some padding */
+/* Ensure ALL non-hero sections start at exact same position */
+#about, #skills, #projects, #contact {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    padding-top: 40px !important;
+}
+
+#about.active,
+#skills.active,
+#projects.active,
+#contact.active {
+    display: block !important;
+    min-height: calc(100vh - 40px);
+}
+
+/* ABSOLUTE FINAL OVERRIDE - Remove ANY relative positioning */
+.main-content .section {
+    position: absolute !important;
+}
+
+.main-content #home,
+.main-content #about,
+.main-content #skills,
+.main-content #projects,
+.main-content #contact {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+}
+
+/* Ensure consistent spacing for all non-hero sections */
+.main-content #about.active,
+.main-content #skills.active,
+.main-content #projects.active,
+.main-content #contact.active {
     padding-top: 40px !important;
 }
