@@ -210,11 +210,17 @@ body {
 }
 
 .section {
-    min-height: 100vh;
-    padding: 5rem 3rem;
+    min-height: auto;
+    padding: 3rem 3rem;
     display: none;
     opacity: 0;
     transform: translateY(30px);
+}
+
+/* Keep hero section full height */
+.hero-section {
+    min-height: 100vh;
+    padding: 5rem 3rem;
 }
 
 .section.active {
@@ -238,7 +244,7 @@ body {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 4rem;
+    margin-bottom: 2.5rem;
     font-family: 'Orbitron', monospace;
 }
 
@@ -1142,4 +1148,41 @@ EOF < /dev/null
 
 .comfyui-header {
     margin-bottom: 2rem;
+}
+
+/* Specific section spacing adjustments */
+.about-section,
+.skills-section,
+.contact-section {
+    padding: 2rem 3rem 3rem;
+}
+
+/* Reduce spacing in about grid */
+.about-grid {
+    gap: 3rem;
+}
+
+/* Reduce spacing in skills matrix */
+.skills-matrix {
+    gap: 2rem;
+}
+
+.category-title {
+    margin-bottom: 1.5rem;
+}
+
+/* Reduce contact section spacing */
+.contact-message {
+    margin-bottom: 2rem;
+}
+
+/* Better responsive padding */
+@media (max-width: 768px) {
+    .section {
+        padding: 2rem 1.5rem;
+    }
+    
+    .hero-section {
+        padding: 3rem 1.5rem;
+    }
 }
