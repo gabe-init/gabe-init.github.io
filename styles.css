@@ -774,7 +774,7 @@ body {
     }
     
     .section:not(.hero-section) {
-        padding: 15px !important;
+        padding: 0 15px 15px !important;  /* NO top padding */
     }
     
     .projects-showcase {
@@ -1183,12 +1183,6 @@ body {
     margin-bottom: 2rem;
 }
 
-/* Specific section spacing adjustments */
-.about-section,
-.skills-section,
-.contact-section {
-    padding: 20px 40px !important;
-}
 
 /* Reduce spacing in about grid */
 .about-grid {
@@ -1212,7 +1206,7 @@ body {
 /* Better responsive padding */
 @media (max-width: 768px) {
     .section:not(.hero-section) {
-        padding: 15px !important;
+        padding: 0 15px 15px !important;  /* NO top padding */
     }
     
     .hero-section {
