@@ -2258,6 +2258,23 @@ html, body {
     margin-bottom: 3rem;
 }
 
+.demo-notice {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(0, 255, 255, 0.05));
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--primary);
+}
+
+.notice-icon {
+    font-size: 1.2rem;
+}
+
 .image-viewport {
     width: 100%;
     min-height: 500px;
