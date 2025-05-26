@@ -1051,26 +1051,72 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // Hugging Face API integration
+        // Backend API integration
         async function generateImageHF(model, params) {
             // Update loading text with more specific feedback
             const loadingText = document.querySelector('.loading-text');
             const loadingSubtext = document.querySelector('.loading-subtext');
             
             try {
-                loadingText.textContent = 'Connecting to Hugging Face...';
+                loadingText.textContent = 'Connecting to backend...';
                 loadingSubtext.textContent = 'Initializing model';
                 
-                // Use Hugging Face Inference API
-                const API_URL = model === 'flux-dev'
-                    ? 'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev'
-                    : 'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell';
+                // Backend API URL - update this with your deployed backend URL
+                // For local development: http://localhost:8000
+                // For production: your deployed backend URL
+                const BACKEND_URL = window.location.hostname === 'localhost' 
+                    ? 'http://localhost:8000'
+                    : 'https://your-backend-url.com'; // TODO: Replace with actual backend URL
                 
                 loadingText.textContent = 'Generating your image...';
                 loadingSubtext.textContent = `Using ${model === 'flux-dev' ? 'FLUX DEV' : 'FLUX Schnell'}`;
                 
-                // For public spaces, we'll use a different approach
-                // Generate a placeholder with instructions
+                // Prepare request payload
+                const requestData = {
+                    prompt: params.prompt,
+                    model: model,
+                    seed: params.seed,
+                    randomize_seed: params.randomize_seed,
+                    width: params.width,
+                    height: params.height,
+                    num_inference_steps: params.num_inference_steps
+                };
+                
+                // Add guidance scale only for flux-dev
+                if (model === 'flux-dev' && params.guidance_scale !== undefined) {
+                    requestData.guidance_scale = params.guidance_scale;
+                }
+                
+                // Make API request
+                const response = await fetch(`${BACKEND_URL}/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || `API Error: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success && result.image) {
+                    loadingText.textContent = 'Image generated successfully!';
+                    loadingSubtext.textContent = `Seed: ${result.seed}`;
+                    return result.image;
+                } else {
+                    throw new Error('Invalid response from server');
+                }
+                
+            } catch (error) {
+                console.error('Generation Error:', error);
+                loadingText.textContent = 'Backend not available';
+                loadingSubtext.textContent = 'Running in demo mode';
+                
+                // Fallback to demo mode
                 const canvas = document.createElement('canvas');
                 canvas.width = params.width;
                 canvas.height = params.height;
@@ -1083,17 +1129,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                // Add decorative elements
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-                ctx.lineWidth = 2;
-                for (let i = 0; i < 10; i++) {
-                    ctx.beginPath();
-                    ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
-                    ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
-                    ctx.stroke();
-                }
-                
-                // Add prompt text
+                // Add backend setup instructions
                 ctx.fillStyle = 'white';
                 ctx.font = 'bold 24px Arial';
                 ctx.textAlign = 'center';
@@ -1101,70 +1137,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
                 ctx.shadowBlur = 5;
                 
-                // Word wrap the prompt
-                const words = params.prompt.split(' ');
-                const lines = [];
-                let currentLine = '';
-                const maxWidth = canvas.width * 0.8;
+                const instructions = [
+                    'Backend Not Connected',
+                    '',
+                    'To enable real image generation:',
+                    '1. Deploy the backend from /backend folder',
+                    '2. Update BACKEND_URL in script.js',
+                    '',
+                    `Prompt: "${params.prompt}"`
+                ];
                 
-                words.forEach(word => {
-                    const testLine = currentLine + (currentLine ? ' ' : '') + word;
-                    const metrics = ctx.measureText(testLine);
-                    if (metrics.width > maxWidth && currentLine) {
-                        lines.push(currentLine);
-                        currentLine = word;
-                    } else {
-                        currentLine = testLine;
-                    }
-                });
-                if (currentLine) lines.push(currentLine);
-                
-                // Draw the prompt
                 const lineHeight = 30;
-                const startY = canvas.height / 2 - (lines.length * lineHeight) / 2;
-                lines.forEach((line, index) => {
+                const startY = canvas.height / 2 - (instructions.length * lineHeight) / 2;
+                
+                instructions.forEach((line, index) => {
+                    ctx.font = index === 0 ? 'bold 28px Arial' : '18px Arial';
                     ctx.fillText(line, canvas.width / 2, startY + index * lineHeight);
                 });
                 
                 // Add model info
                 ctx.font = '16px Arial';
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                ctx.fillText(`Generated with ${model === 'flux-dev' ? 'FLUX DEV' : 'FLUX Schnell'}`, canvas.width / 2, canvas.height - 30);
-                
-                // Add timestamp
-                ctx.font = '12px Arial';
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-                ctx.fillText(new Date().toLocaleString(), canvas.width / 2, canvas.height - 10);
+                ctx.fillText(`Demo Mode - ${model === 'flux-dev' ? 'FLUX DEV' : 'FLUX Schnell'}`, canvas.width / 2, canvas.height - 30);
                 
                 // Simulate processing time
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                loadingText.textContent = 'Finalizing image...';
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-                return canvas.toDataURL('image/png');
-                
-            } catch (error) {
-                console.error('Generation Error:', error);
-                loadingText.textContent = 'Generation complete';
-                loadingSubtext.textContent = 'Demo mode active';
-                
-                // Generate a simple placeholder
-                const canvas = document.createElement('canvas');
-                canvas.width = params.width;
-                canvas.height = params.height;
-                const ctx = canvas.getContext('2d');
-                
-                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-                gradient.addColorStop(0, '#ff00ff');
-                gradient.addColorStop(1, '#00ffff');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.fillStyle = 'white';
-                ctx.font = '20px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(params.prompt, canvas.width/2, canvas.height/2);
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 
                 return canvas.toDataURL('image/png');
             }
