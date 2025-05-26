@@ -902,9 +902,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const historyGrid = document.getElementById('historyGrid');
         
         let selectedModel = 'flux-dev';
-        let generationHistory = JSON.parse(localStorage.getItem('generationHistory') || '[]');
+        let generationHistory = [];
         
-        // Load history on page load
+        // Load and clean history on page load
+        try {
+            generationHistory = JSON.parse(localStorage.getItem('generationHistory') || '[]');
+            // Clean up old format history items
+            generationHistory = generationHistory.filter(item => item && item.id).slice(0, 6);
+            // Re-save cleaned history
+            localStorage.setItem('generationHistory', JSON.stringify(generationHistory));
+        } catch (e) {
+            console.warn('Could not load history, starting fresh:', e);
+            generationHistory = [];
+            localStorage.removeItem('generationHistory');
+        }
+        
+        // Display history if available
         if (generationHistory.length > 0) {
             displayHistory();
         }
@@ -985,21 +998,51 @@ document.addEventListener('DOMContentLoaded', function() {
                 generationLoading.style.display = 'none';
                 imageDisplay.style.display = 'flex';
                 
-                // Save to history
-                const historyItem = {
-                    id: Date.now(),
-                    prompt: prompt,
-                    imageUrl: imageUrl,
-                    model: selectedModel,
-                    timestamp: new Date().toISOString()
-                };
-                
-                generationHistory.unshift(historyItem);
-                if (generationHistory.length > 12) {
-                    generationHistory = generationHistory.slice(0, 12);
+                // Save to history with compression
+                try {
+                    // Create a smaller thumbnail for history
+                    const thumbnailCanvas = document.createElement('canvas');
+                    const thumbnailCtx = thumbnailCanvas.getContext('2d');
+                    thumbnailCanvas.width = 200;
+                    thumbnailCanvas.height = 200;
+                    
+                    // Draw the full image scaled down
+                    const img = new Image();
+                    img.onload = () => {
+                        thumbnailCtx.drawImage(img, 0, 0, 200, 200);
+                        const thumbnailUrl = thumbnailCanvas.toDataURL('image/jpeg', 0.6);
+                        
+                        const historyItem = {
+                            id: Date.now(),
+                            prompt: prompt,
+                            thumbnailUrl: thumbnailUrl,
+                            fullImageUrl: imageUrl,
+                            model: selectedModel,
+                            timestamp: new Date().toISOString()
+                        };
+                        
+                        generationHistory.unshift(historyItem);
+                        
+                        // Keep only 6 items to avoid quota issues
+                        if (generationHistory.length > 6) {
+                            generationHistory = generationHistory.slice(0, 6);
+                        }
+                        
+                        try {
+                            localStorage.setItem('generationHistory', JSON.stringify(generationHistory));
+                            displayHistory();
+                        } catch (e) {
+                            console.warn('Could not save to history:', e);
+                            // If still too large, clear history and save just the current item
+                            generationHistory = [historyItem];
+                            localStorage.setItem('generationHistory', JSON.stringify(generationHistory));
+                            displayHistory();
+                        }
+                    };
+                    img.src = imageUrl;
+                } catch (e) {
+                    console.warn('Could not save to history:', e);
                 }
-                localStorage.setItem('generationHistory', JSON.stringify(generationHistory));
-                displayHistory();
                 
             } catch (error) {
                 console.error('Generation error:', error);
@@ -1029,7 +1072,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             historyGrid.innerHTML = generationHistory.map(item => `
                 <div class="history-item" data-id="${item.id}">
-                    <img src="${item.imageUrl}" alt="${item.prompt}">
+                    <img src="${item.thumbnailUrl || item.imageUrl}" alt="${item.prompt}">
                     <div class="history-item-info">
                         ${item.model === 'flux-schnell' ? '⚡' : '🎨'} ${new Date(item.timestamp).toLocaleDateString()}
                     </div>
@@ -1042,7 +1085,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const id = parseInt(this.getAttribute('data-id'));
                     const historyItem = generationHistory.find(h => h.id === id);
                     if (historyItem) {
-                        generatedImage.src = historyItem.imageUrl;
+                        generatedImage.src = historyItem.fullImageUrl || historyItem.imageUrl;
                         imagePrompt.value = historyItem.prompt;
                         viewportPlaceholder.style.display = 'none';
                         imageDisplay.style.display = 'flex';
