@@ -2187,6 +2187,7 @@ html, body {
     transition: var(--transition);
     position: relative;
     overflow: hidden;
+    z-index: 1;
 }
 
 .model-card::before {

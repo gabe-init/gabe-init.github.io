@@ -874,8 +874,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Image Generation Functionality
-    const imageGenSection = document.getElementById('image-gen');
-    if (imageGenSection) {
+    let imageGenInitialized = false;
+    
+    function initializeImageGeneration() {
+        // Prevent re-initialization
+        if (imageGenInitialized) return;
+        imageGenInitialized = true;
+        
         // Elements
         const modelCards = document.querySelectorAll('.model-card');
         const toggleAdvancedBtn = document.getElementById('toggleAdvancedBtn');
@@ -906,18 +911,22 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Model selection
         modelCards.forEach(card => {
-            card.addEventListener('click', function() {
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Model card clicked:', this.getAttribute('data-model'));
                 modelCards.forEach(c => c.classList.remove('active'));
                 this.classList.add('active');
                 selectedModel = this.getAttribute('data-model');
+                console.log('Selected model:', selectedModel);
                 
                 // Update settings based on model
+                const fluxDevOnly = document.querySelector('.flux-dev-only');
                 if (selectedModel === 'flux-schnell') {
                     inferenceSteps.value = '4';
-                    document.querySelector('.flux-dev-only').style.display = 'none';
+                    if (fluxDevOnly) fluxDevOnly.style.display = 'none';
                 } else {
                     inferenceSteps.value = '28';
-                    document.querySelector('.flux-dev-only').style.display = 'block';
+                    if (fluxDevOnly) fluxDevOnly.style.display = 'block';
                 }
             });
         });
@@ -930,17 +939,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Guidance scale slider
-        guidanceScale.addEventListener('input', function() {
-            guidanceScaleValue.textContent = this.value;
-        });
+        if (guidanceScale && guidanceScaleValue) {
+            guidanceScale.addEventListener('input', function() {
+                guidanceScaleValue.textContent = this.value;
+            });
+        }
         
         // Generate image
-        generateBtn.addEventListener('click', async function() {
+        generateBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            console.log('Generate button clicked');
             const prompt = imagePrompt.value.trim();
             if (!prompt) {
                 alert('Please enter a prompt');
                 return;
             }
+            console.log('Generating with prompt:', prompt, 'Model:', selectedModel);
             
             // Disable generate button and show loading
             generateBtn.disabled = true;
@@ -959,7 +973,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     num_inference_steps: parseInt(inferenceSteps.value)
                 };
                 
-                if (selectedModel === 'flux-dev') {
+                if (selectedModel === 'flux-dev' && guidanceScale) {
                     params.guidance_scale = parseFloat(guidanceScale.value);
                 }
                 
@@ -1039,88 +1053,120 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Hugging Face API integration
         async function generateImageHF(model, params) {
-            // For GitHub Pages, we'll use a proxy or direct API approach
-            // Since we can't use server-side code, we'll use the Hugging Face Inference API
-            
-            // Using Hugging Face Spaces API directly
-            // Note: This is a simplified version. In production, you'd want to handle this more robustly
+            // Update loading text with more specific feedback
+            const loadingText = document.querySelector('.loading-text');
+            const loadingSubtext = document.querySelector('.loading-subtext');
             
             try {
-                // Create the API URL for the space
-                const apiUrl = `https://black-forest-labs-${model.replace('-', '-1-')}.hf.space/api/predict/`;
+                loadingText.textContent = 'Connecting to Hugging Face...';
+                loadingSubtext.textContent = 'Initializing model';
                 
-                // Prepare the request payload
-                const payload = {
-                    data: [
+                // Use the Gradio client approach similar to the Python scripts
+                const spaceUrl = model === 'flux-dev' 
+                    ? 'https://black-forest-labs-flux-1-dev.hf.space'
+                    : 'https://black-forest-labs-flux-1-schnell.hf.space';
+                
+                // First, get the API endpoint
+                loadingText.textContent = 'Preparing request...';
+                const configResponse = await fetch(`${spaceUrl}/config`);
+                if (!configResponse.ok) {
+                    throw new Error('Failed to connect to Hugging Face Space');
+                }
+                
+                // Prepare the request
+                loadingText.textContent = 'Generating your image...';
+                loadingSubtext.textContent = `Using ${model === 'flux-dev' ? 'FLUX DEV' : 'FLUX Schnell'}`;
+                
+                // Build the data array based on the model
+                const data = model === 'flux-dev' 
+                    ? [
                         params.prompt,
                         params.seed,
                         params.randomize_seed,
                         params.width,
                         params.height,
-                        model === 'flux-dev' ? params.guidance_scale : null,
+                        params.guidance_scale,
                         params.num_inference_steps
-                    ].filter(v => v !== null)
-                };
+                    ]
+                    : [
+                        params.prompt,
+                        params.seed,
+                        params.randomize_seed,
+                        params.width,
+                        params.height,
+                        params.num_inference_steps
+                    ];
                 
-                const response = await fetch(apiUrl, {
+                // Use the run/predict endpoint
+                const response = await fetch(`${spaceUrl}/run/predict`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({
+                        data: data,
+                        fn_index: 0
+                    })
                 });
                 
                 if (!response.ok) {
-                    throw new Error('Failed to generate image');
+                    throw new Error(`API Error: ${response.status}`);
                 }
                 
                 const result = await response.json();
                 
-                // Extract image URL from response
-                let imageUrl = result.data[0];
+                // Extract image data
+                let imageData = result.data[0];
                 
                 // Handle different response formats
-                if (typeof imageUrl === 'object' && imageUrl.url) {
-                    imageUrl = imageUrl.url;
-                } else if (typeof imageUrl === 'object' && imageUrl.path) {
-                    imageUrl = imageUrl.path;
+                if (typeof imageData === 'string') {
+                    if (imageData.startsWith('data:') || imageData.startsWith('http')) {
+                        return imageData;
+                    } else if (imageData.startsWith('/')) {
+                        // Relative path
+                        return `${spaceUrl}/file=${imageData}`;
+                    }
+                } else if (typeof imageData === 'object') {
+                    if (imageData.url) {
+                        return imageData.url;
+                    } else if (imageData.path) {
+                        return `${spaceUrl}/file=${imageData.path}`;
+                    } else if (imageData.data) {
+                        // Base64 data
+                        return `data:image/png;base64,${imageData.data}`;
+                    }
                 }
                 
-                // If it's a relative URL, prepend the space URL
-                if (!imageUrl.startsWith('http') && !imageUrl.startsWith('data:')) {
-                    imageUrl = `https://black-forest-labs-${model.replace('-', '-1-')}.hf.space/file=${imageUrl}`;
-                }
-                
-                return imageUrl;
+                throw new Error('Unexpected response format');
                 
             } catch (error) {
-                console.error('HF API Error:', error);
+                console.error('Generation Error:', error);
+                loadingText.textContent = 'Generation failed';
+                loadingSubtext.textContent = error.message;
                 
-                // Fallback: Generate a placeholder image with the prompt
-                // In a real implementation, you'd want proper error handling
-                const canvas = document.createElement('canvas');
-                canvas.width = params.width;
-                canvas.height = params.height;
-                const ctx = canvas.getContext('2d');
-                
-                // Create a gradient background
-                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-                gradient.addColorStop(0, '#ff00ff');
-                gradient.addColorStop(1, '#00ffff');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Add text
-                ctx.fillStyle = 'white';
-                ctx.font = '24px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('Image generation in progress...', canvas.width/2, canvas.height/2 - 30);
-                ctx.font = '16px Arial';
-                ctx.fillText('(API connection required)', canvas.width/2, canvas.height/2 + 10);
-                
-                return canvas.toDataURL('image/png');
+                // Show error for 3 seconds then throw
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                throw error;
             }
         }
+    }
+    
+    // Initialize image generation when navigating to that section
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const targetSection = this.getAttribute('data-section');
+            if (targetSection === 'image-gen') {
+                // Wait for DOM to update
+                setTimeout(() => {
+                    initializeImageGeneration();
+                }, 100);
+            }
+        });
+    });
+    
+    // Also check if image-gen is already active on page load
+    const activeSection = document.querySelector('.section.active');
+    if (activeSection && activeSection.id === 'image-gen') {
+        initializeImageGeneration();
     }
 });
