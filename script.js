@@ -233,7 +233,13 @@ document.addEventListener('DOMContentLoaded', function() {
             tech: ['Python', 'Git', 'Code Analysis', 'Repository Processing'],
             link: 'https://github.com/gabe-init/ComfyUI-Repo-Eater'
         }
-    };
+    ,
+        'ComfyUI-LM-Studio': {
+            title: 'LM Studio Integration Node',
+            description: 'Integrate local LLMs from LM Studio into ComfyUI workflows. Run powerful language models locally with full control over your data and processing.',
+            tech: ['Python', 'LM Studio API', 'Local LLMs', 'AI Integration'],
+            link: 'https://github.com/gabe-init/ComfyUI-LM-Studio'
+        }};
     
     floatingNodes.forEach(node => {
         node.addEventListener('click', function() {
